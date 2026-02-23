@@ -30,11 +30,13 @@ Camera → Hand Tracker → Gesture Classifier → Action Mapper → OS Command
 ## 📋 Requirements
 
 ### System Requirements
+
 - Linux with Hyprland window manager
 - Webcam
 - Python 3.11
 
 ### Python Dependencies
+
 - opencv-python (cv2)
 - mediapipe
 - numpy
@@ -45,18 +47,21 @@ Camera → Hand Tracker → Gesture Classifier → Action Mapper → OS Command
 ## 🚀 Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd gest-action
    ```
 
 2. **Create and activate virtual environment**
+
    ```bash
    python3 -m venv gesture-env
    source gesture-env/bin/activate
    ```
 
 3. **Install dependencies**
+
    ```bash
    pip install opencv-python mediapipe numpy pandas scikit-learn
    ```
@@ -79,17 +84,17 @@ python main.py
 
 ### Recognized Gestures
 
-| Gesture | ID | Action |
-|---------|----|----|
-| 0 Sign | 0 | Launch Kitty terminal |
-| 1 Finger Up | 1 | Switch to workspace 1 |
-| 2 Fingers Up | 2 | Switch to workspace 2 |
-| 3 Fingers Up | 3 | Switch to workspace 3 |
-| 4 Fingers Up | 4 | Move window to next workspace |
-| 5 Fingers Up | 5 | Move window to previous workspace |
-| Fist | 6 | Cycle to next window |
-| Thumbs Up | 7 | Open image in Gthumb |
-| Thumbs Down | 8 | Close active window |
+| Gesture      | ID  | Action                            |
+| ------------ | --- | --------------------------------- |
+| 0 Sign       | 0   | Launch Kitty terminal             |
+| 1 Finger Up  | 1   | Switch to workspace 1             |
+| 2 Fingers Up | 2   | Switch to workspace 2             |
+| 3 Fingers Up | 3   | Switch to workspace 3             |
+| 4 Fingers Up | 4   | Move window to next workspace     |
+| 5 Fingers Up | 5   | Move window to previous workspace |
+| Fist         | 6   | Cycle to next window              |
+| Thumbs Up    | 7   | Open image in Gthumb              |
+| Thumbs Down  | 8   | Close active window               |
 
 ## 🎓 Training the Model
 
@@ -123,6 +128,7 @@ python train_knn.py
 ```
 
 This will:
+
 - Load training data from `data.csv`
 - Split into training (80%) and testing (20%) sets
 - Train a KNN classifier with k=5
@@ -157,7 +163,7 @@ gest-action/
 ### Hand Landmark Processing
 
 1. **Detection**: MediaPipe detects 21 hand landmarks in 3D space (x, y, z)
-2. **Normalization**: 
+2. **Normalization**:
    - Translate all points relative to wrist (landmark 0)
    - Scale by maximum distance from wrist
    - Creates a 63-dimensional feature vector (21 landmarks × 3 coordinates)
@@ -207,22 +213,26 @@ gesture_actions = {
 ## 🐛 Troubleshooting
 
 ### Camera Not Opening
+
 - Check if camera is being used by another application
 - Verify camera permissions
 - Try changing camera index in `camera.py`: `cv.VideoCapture(1)` or `cv.VideoCapture(2)`
 
 ### Low Accuracy
+
 - Collect more training data for problematic gestures
 - Ensure consistent hand positioning during training
 - Check lighting conditions (bright, even lighting works best)
 - Retrain model with higher quality data
 
 ### Hyprland Commands Not Working
+
 - Ensure Hyprland is running
 - Test commands manually: `hyprctl dispatch workspace 1`
 - Check Hyprland configuration
 
 ### High CPU Usage
+
 - Increase `process_rate` in `main.py`
 - Reduce camera resolution in `camera.py`
 
@@ -239,6 +249,7 @@ gesture_actions = {
 ## 📝 Development Notes
 
 See `NOTES.md` for detailed development journey and experiences, including:
+
 - Environment setup challenges
 - MediaPipe API migration issues
 - Gesture design decisions
