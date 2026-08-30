@@ -10,18 +10,27 @@ from collections import deque
 class GestureWorker(QThread):
     frame_signal = pyqtSignal(np.ndarray)
     gesture_signal = pyqtSignal(int, float)
+    error_signal = pyqtSignal(str)
 
     def __init__(self):
         super().__init__()
 
         self.running = True
-        self.camera = Camera()
+        self.camera = None
         self.tracker = HandTracker()
         self.classifier = GestureClassifier("gesture_knn.pkl")
         self.actions = ActionMapper()
         self.platform = self.actions.check_platform()
-        
+
     def run(self):
+        # Open the camera here (on the worker thread) so a failure can be
+        # reported to the UI instead of crashing app construction.
+        try:
+            self.camera = Camera()
+        except RuntimeError as e:
+            self.error_signal.emit(str(e))
+            return
+
         history = deque(maxlen=10)
         frame_count = 0
         process_rate = 2

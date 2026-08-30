@@ -1,19 +1,21 @@
 import sys
 import cv2
-
+import warnings
 from PyQt6.QtWidgets import (
     QApplication,
     QWidget,
     QLabel,
     QVBoxLayout,
     QProgressBar,
-    QPushButton
+    QPushButton,
+    QMessageBox
 )
 from PyQt6.QtGui import QImage, QPixmap
 from PyQt6.QtCore import Qt
 
 from gesture_worker import GestureWorker
 
+warnings.filterwarnings("ignore", category=UserWarning, module="google.protobuf")
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -41,15 +43,17 @@ class MainWindow(QWidget):
         # Start/Stop Button
         self.toggle_button = QPushButton("Stop")
         self.toggle_button.clicked.connect(self.toggle_worker)
-
+        
+        self.min_bttn = QPushButton("Minimize")
+        self.min_bttn.clicked.connect(self.showMinimized)
         # Layout 
         layout = QVBoxLayout()
+        layout.addWidget(self.min_bttn)
         layout.addWidget(self.video_label)
         layout.addWidget(self.platform_label)
         layout.addWidget(self.gesture_label)
         layout.addWidget(self.confidence_bar)
         layout.addWidget(self.toggle_button)
-        
         self.setLayout(layout)
 
         # Start Worker thread
@@ -57,6 +61,7 @@ class MainWindow(QWidget):
 
         self.worker.frame_signal.connect(self.update_frame)
         self.worker.gesture_signal.connect(self.update_gesture)
+        self.worker.error_signal.connect(self.handle_error)
         self.worker.start()
         self.platform_label.setText(self.worker.platform)
 
@@ -68,8 +73,15 @@ class MainWindow(QWidget):
             self.worker = GestureWorker()
             self.worker.frame_signal.connect(self.update_frame)
             self.worker.gesture_signal.connect(self.update_gesture)
+            self.worker.error_signal.connect(self.handle_error)
             self.worker.start()
             self.toggle_button.setText("Stop")
+
+    def handle_error(self, message):
+        self.gesture_label.setText("Camera unavailable")
+        self.confidence_bar.setValue(0)
+        self.toggle_button.setText("Start")
+        QMessageBox.critical(self, "Camera Error", message)
 
     def update_frame(self, frame):
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)

@@ -11,16 +11,15 @@ class ActionMapper:
     def check_platform(self):
         os_name = platform.system()
         if os_name == "Darwin":
-            print("Running on MacOS")
             return "MacOS"
         elif os_name == "Linux":
-            print("Running on Linux")
             return "Linux"
         else:
             print("Other OS")
             return ""
 
     def action_mapping(self):
+        gesture_actions = {}
         if self.platform == "Linux":
             desktop = os.environ.get("XDG_CURRENT_DESKTOP", "")
             session = os.environ.get("XDG_SESSION_DESKTOP", "")
@@ -30,7 +29,7 @@ class ActionMapper:
                     0: lambda: subprocess.run(["hyprctl", "dispatch", "exec", "kitty"]),
                     1: lambda: subprocess.run(["hyprctl", "dispatch", "workspace 1"]),
                     2: lambda: subprocess.run(["hyprctl", "dispatch", "workspace 2"]),
-                    3: lambda: subprocess.run(["hyprctl", "dispatch", "workspace 3"]),
+                    3: lambda: subprocess.run(["hyprctl", "dispatch", "exec", "nautilus"]),
                     4: lambda: subprocess.run(["hyprctl", "dispatch", "movetoworkspace", "+1"]),
                     5: lambda: subprocess.run(["hyprctl", "dispatch", "movetoworkspace", "-1"]),
                     6: lambda: subprocess.run(["hyprctl","dispatch", "cyclenext"]),
